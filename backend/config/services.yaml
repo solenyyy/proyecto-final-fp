@@ -1,0 +1,18 @@
+# yaml-language-server: $schema=../vendor/symfony/dependency-injection/Loader/schema/services.schema.json
+
+parameters:
+services:
+    # default configuration for services in *this* file
+    _defaults:
+        autowire: true      # Automatically injects dependencies in your services.
+        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+
+    # makes controllers in src/Controller available as services
+    App\Controller\:
+        resource: '../src/Controller'
+        tags: ['controller.service_arguments']
+
+    # makes other classes in src/ available as services
+    App\:
+        resource: '../src/'
+        exclude: '../src/{DependencyInjection,Entity,Migrations,Tests,Kernel.php}'
