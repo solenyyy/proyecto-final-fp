@@ -12,6 +12,6 @@ class TestDbController extends AbstractController
     public function test(Connection $connection): Response
     {
         $db = $connection->executeQuery('SELECT DATABASE()')->fetchOne();
-        return new Response('Conectado a la BDD: ' . $db);
+        return new Response('Conectada a la BDD: ' . $db);
     }
 }

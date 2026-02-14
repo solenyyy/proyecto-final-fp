@@ -8,7 +8,14 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Patch;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+use App\Enum\Collective;
 use Symfony\Component\Serializer\Annotation\Groups;
+use ApiPlatform\Doctrine\Orm\Filter\DateFilter;
+use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
+
 
 #[ORM\Table(name: "activities")]
 #[ORM\Entity]
@@ -22,6 +29,19 @@ use Symfony\Component\Serializer\Annotation\Groups;
 )]
 class Activity
 {
+    #[ApiFilter(SearchFilter::class, properties: [
+        'collective' => 'exact',
+        'volunteer.id' => 'exact',
+    ])]
+    #[ApiFilter(DateFilter::class, properties: [
+        'startDate',
+        'endDate'
+    ])]
+    #[ApiFilter(OrderFilter::class, properties: [
+        'startDate',
+        'endDate'
+    ], arguments: ['orderParameterName' => 'order'])]
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
@@ -35,6 +55,21 @@ class Activity
     #[ORM\Column(length: 500, nullable: true)]
     #[Groups(['activity:read', 'activity:write'])]
     private ?string $description = null;
+
+    #[ORM\Column(type: 'datetime', nullable: false)]
+    #[Assert\NotNull(message: "La fecha de inicio es obligatoria")]
+    #[Groups(['activity:read', 'activity:write'])]
+    private ?\DateTimeInterface $startDate = null;
+
+    #[ORM\Column(type: 'datetime', nullable: false)]
+    #[Assert\NotNull(message: "La fecha de fin es obligatoria")]
+    #[Assert\GreaterThan(propertyPath: "startDate", message: "La fecha de fin debe ser posterior a la fecha de inicio")]
+    #[Groups(['activity:read', 'activity:write'])]
+    private ?\DateTimeInterface $endDate = null;
+
+    #[ORM\Column(enumType: Collective::class)]
+    #[Groups(['activity:read', 'activity:write'])]
+    private ?Collective $collective = null;
 
     #[ORM\ManyToOne(targetEntity: Volunteer::class, inversedBy: 'activities')]
     #[ORM\JoinColumn(name: "volunteer_id", referencedColumnName: "id", nullable: true)]
@@ -78,4 +113,37 @@ class Activity
         $this->description = $description;
         return $this;
     }
+    public function getStartDate(): ?\DateTimeInterface
+    {
+        return $this->startDate;
+    }
+
+    public function setStartDate(\DateTimeInterface $startDate): self
+    {
+        $this->startDate = $startDate;
+        return $this;
+    }
+
+    public function getEndDate(): ?\DateTimeInterface
+    {
+        return $this->endDate;
+    }
+
+    public function setEndDate(\DateTimeInterface $endDate): self
+    {
+        $this->endDate = $endDate;
+        return $this;
+    }
+
+    public function getCollective(): ?Collective
+    {
+        return $this->collective;
+    }
+
+    public function setCollective(?Collective $collective): self
+    {
+        $this->collective = $collective;
+        return $this;
+    }
+
 }
