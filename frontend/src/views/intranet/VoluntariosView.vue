@@ -2,17 +2,17 @@
   <div class="intranet-page">
     <div class="page-header">
       <div>
-        <h2 class="page-title">Voluntarios</h2>
-        <p class="page-subtitle">Listado de voluntarios registrados</p>
+        <h2 class="page-title">Voluntari@s</h2>
+        <p class="page-subtitle">Listado de voluntari@s registrados</p>
       </div>
       <button class="btn btn-primary">
-        <i class="fas fa-plus me-2"></i>Nuevo voluntario
+        <i class="fas fa-plus me-2"></i>Nuevo voluntari@
       </button>
     </div>
 
     <div v-if="loading" class="table-loading">
       <div class="spinner-border text-primary" role="status"></div>
-      <span>Cargando voluntarios...</span>
+      <span>Cargando voluntari@s...</span>
     </div>
 
     <div v-else class="table-card">
@@ -23,7 +23,7 @@
               v-model="search"
               type="text"
               class="form-control search-input"
-              placeholder="Buscar voluntario..."
+              placeholder="Buscar voluntari@..."
           />
         </div>
       </div>
@@ -43,7 +43,7 @@
           </thead>
           <tbody>
           <tr v-if="filtered.length === 0">
-            <td colspan="7" class="empty-row">No hay voluntarios que coincidan</td>
+            <td colspan="7" class="empty-row">No hay voluntari@s que coincidan</td>
           </tr>
           <tr v-for="vol in filtered" :key="vol.id">
             <td class="text-muted">#{{ vol.id }}</td>
