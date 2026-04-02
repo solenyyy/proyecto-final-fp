@@ -17,7 +17,7 @@
 
     <div v-else class="table-card">
       <div class="table-toolbar">
-        <div class="search-wrapper">
+        <div class="search-wrapper d-flex align-items-center gap-2">
           <i class="fas fa-search search-icon"></i>
           <input
               v-model="search"
