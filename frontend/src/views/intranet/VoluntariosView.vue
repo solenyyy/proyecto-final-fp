@@ -57,7 +57,7 @@
             <td><code>{{ vol.dniNie }}</code></td>
             <td>{{ formatDate(vol.birthDate) }}</td>
             <td>
-              <span class="activity-count">{{ vol.activities?.length ?? 0 }}</span>
+              <span class="activity-count">{{ vol.activitiesCount ?? 0 }}</span>
             </td>
             <td>
               <button class="btn btn-sm btn-ghost">

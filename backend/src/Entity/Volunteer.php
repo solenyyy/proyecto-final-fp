@@ -144,4 +144,10 @@ class Volunteer
         $this->birthDate = $birthDate;
         return $this;
     }
+
+    #[Groups(['volunteer:read'])]
+    public function getActivitiesCount(): int
+    {
+        return $this->activities->count();
+    }
 }
