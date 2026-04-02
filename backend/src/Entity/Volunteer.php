@@ -13,6 +13,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 
 #[ORM\Entity]
+#[ORM\Table(name: "volunteers")]
 #[ApiResource(
     operations: [
         new Get(normalizationContext: ['groups' => ['volunteer:read']]),
@@ -99,6 +100,39 @@ public function removeActivity(Activity $activity): self
     public function setEmail(?string $email): self
     {
         $this->email = $email;
+        return $this;
+    }
+
+    public function getDniNie(): ?string
+    {
+        return $this->dniNie;
+    }
+
+    public function setDniNie(string $dniNie): self
+    {
+        $this->dniNie = $dniNie;
+        return $this;
+    }
+
+    public function getBio(): ?string
+    {
+        return $this->bio;
+    }
+
+    public function setBio(?string $bio): self
+    {
+        $this->bio = $bio;
+        return $this;
+    }
+
+    public function getBirthDate(): ?\DateTimeInterface
+    {
+        return $this->birthDate;
+    }
+
+    public function setBirthDate(\DateTimeInterface $birthDate): self
+    {
+        $this->birthDate = $birthDate;
         return $this;
     }
 }
