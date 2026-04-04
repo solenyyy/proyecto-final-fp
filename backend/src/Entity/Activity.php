@@ -25,8 +25,7 @@ use App\Enum\Collective;
     operations: [
         new Get(normalizationContext: ['groups' => ['activity:read']]),
         new GetCollection(
-            normalizationContext: ['groups' => ['activity:read']],
-            provider: ActivityCollectionProvider::class
+            normalizationContext: ['groups' => ['activity:read']]
         ),
         new Post(normalizationContext: ['groups' => ['activity:read']], denormalizationContext: ['groups' => ['activity:write']]),
         new Patch(normalizationContext: ['groups' => ['activity:read']], denormalizationContext: ['groups' => ['activity:write']]),

@@ -10,8 +10,19 @@ function formatErrors(errors: ValidationError[]): Record<string, string[]> {
     }, {} as Record<string, string[]>)
 }
 
-export function findAll(): Promise<Activity[]> {
-    return authFetch('/api/activities')
+export function findAll(filters?: Record<string, any>): Promise<Activity[]> {
+    let url = '/api/activities'
+    if (filters) {
+        const params = new URLSearchParams()
+        Object.entries(filters).forEach(([key, value]) => {
+            if (value !== undefined && value !== null) {
+                params.append(key, String(value))
+            }
+        })
+        url += `?${params.toString()}`
+    }
+
+    return authFetch(url)
         .then(res => res.json())
         .then(data => plainToInstance(Activity, data['member'] as object[], {
             groups: ['default'],

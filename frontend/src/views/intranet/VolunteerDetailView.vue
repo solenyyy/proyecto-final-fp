@@ -162,6 +162,7 @@ import { Volunteer } from '../../entity/volunteer.ts'
 import { create, findOne, update, remove } from '../../repository/volunteer.ts'
 import { collectives } from '../../utils/generalVars.ts'
 import ModalConfirm from "../../components/ModalConfirm.vue";
+import {findAll} from "../../repository/activity.ts";
 
 const route = useRoute()
 const router = useRouter()
@@ -212,10 +213,11 @@ onMounted(() => {
           loading.value = false
         })
 
-    fetch(`/api/activities?volunteer.id=${id}`)
-        .then(res => res.json())
+    findAll({
+      'volunteer.id': id
+    })
         .then(data => {
-          activities.value = data['member'] ?? []
+          activities.value = data ?? []
         })
   } else {
     loading.value = false

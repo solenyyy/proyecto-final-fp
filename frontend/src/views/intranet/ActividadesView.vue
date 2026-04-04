@@ -72,7 +72,7 @@
                 {{ collectiveLabel(act.collective) }}
               </span>
             </td>
-            <td>{{ act.volunteer?.name ?? '—' }}</td>
+            <td>{{ act.volunteer?.name }}</td>
             <td>{{ formatDate(act.startDate) }}</td>
             <td>{{ formatDate(act.endDate) }}</td>
             <td>

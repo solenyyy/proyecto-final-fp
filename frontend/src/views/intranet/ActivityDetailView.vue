@@ -141,6 +141,7 @@ import { collectives } from '../../utils/generalVars.ts'
 import ConfirmModal from '../../components/ModalConfirm.vue'
 import { create, findOne, update, remove } from '../../repository/activity.ts'
 import ModalConfirm from "../../components/ModalConfirm.vue";
+import {findAll} from "../../repository/volunteer.ts";
 
 const route = useRoute()
 const router = useRouter()
@@ -187,10 +188,9 @@ onMounted(() => {
     loading.value = false
   }
 
-  fetch('/api/volunteers')
-      .then(res => res.json())
+  findAll()
       .then(data => {
-        volunteers.value = data['member'] ?? []
+        volunteers.value = data ?? []
       })
 })
 
