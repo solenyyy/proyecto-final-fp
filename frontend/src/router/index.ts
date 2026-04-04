@@ -19,12 +19,24 @@ const routes = [
                 component: () => import('../views/intranet/ActividadesView.vue')
             },
             {
+                path: 'actividades/nueva',
+                component: () => import('../views/intranet/ActivityDetailView.vue')
+            },
+            {
                 path: 'actividades/:id',
                 component: () => import('../views/intranet/ActivityDetailView.vue')
             },
             {
                 path: 'voluntarios',
                 component: () => import('../views/intranet/VoluntariosView.vue')
+            },
+            {
+                path: 'voluntarios/nueva',
+                component: () => import('../views/intranet/VolunteerDetailView.vue')
+            },
+            {
+                path: 'voluntarios/:id',
+                component: () => import('../views/intranet/VolunteerDetailView.vue')
             }
         ]
     }

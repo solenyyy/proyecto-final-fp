@@ -8,11 +8,15 @@
         </RouterLink>
         <div>
           <h2 class="page-title mb-0">{{ activity.name || 'Actividad' }}</h2>
-          <p class="page-subtitle mb-0">Editando actividad #{{ id }}</p>
+          <p class="page-subtitle mb-0">{{ isNew ? 'Nueva actividad' : `Editando actividad #${id}` }}</p>
         </div>
       </div>
       <div class="d-flex gap-2 align-items-center">
-        <button class="btn btn-primary" @click="save" :disabled="saving">
+        <button v-if="isNew" class="btn btn-primary" @click="handleCreate" :disabled="saving">
+          <i class="fas fa-plus me-2"></i>
+          {{ saving ? 'Creando...' : 'Crear actividad' }}
+        </button>
+        <button v-else class="btn btn-primary" @click="handleUpdate" :disabled="saving">
           <i class="fas fa-floppy-disk me-2"></i>
           {{ saving ? 'Guardando...' : 'Guardar cambios' }}
         </button>
@@ -25,7 +29,6 @@
     </div>
 
     <div v-else class="row g-4">
-
       <div class="col-lg-8">
         <div class="card border-0 shadow-sm rounded-4 p-4">
           <h6 class="text-uppercase text-muted fw-bold small mb-3">
@@ -33,21 +36,45 @@
           </h6>
           <div class="mb-3">
             <label class="form-label">Nombre de la actividad *</label>
-            <input type="text" class="form-control" v-model="activity.name" placeholder="Nombre de la actividad" />
+            <input type="text" class="form-control"
+                   :class="{ 'is-invalid': errors.name?.length }"
+                   v-model="activity.name"
+                   placeholder="Nombre de la actividad" />
+            <div v-for="error in errors.name" :key="error" class="invalid-feedback">
+              {{ error }}
+            </div>
           </div>
+
           <div class="mb-3">
             <label class="form-label">Descripción</label>
-            <textarea class="form-control" rows="4" v-model="activity.description"
+            <textarea class="form-control"
+                      :class="{ 'is-invalid': errors.description?.length }"
+                      rows="4" v-model="activity.description"
                       placeholder="Describe la actividad..."></textarea>
+            <div v-for="error in errors.description" :key="error" class="invalid-feedback">
+              {{ error }}
+            </div>
           </div>
+
           <div class="row g-3">
             <div class="col-md-6">
               <label class="form-label">Fecha de inicio *</label>
-              <input type="datetime-local" class="form-control" v-model="activity.startDate" />
+              <input type="datetime-local" class="form-control"
+                     :class="{ 'is-invalid': errors.startDate?.length }"
+                     v-model="activity.startDate" />
+              <div v-for="error in errors.startDate" :key="error" class="invalid-feedback">
+                {{ error }}
+              </div>
             </div>
+
             <div class="col-md-6">
               <label class="form-label">Fecha de fin *</label>
-              <input type="datetime-local" class="form-control" v-model="activity.endDate" />
+              <input type="datetime-local" class="form-control"
+                     :class="{ 'is-invalid': errors.endDate?.length }"
+                     v-model="activity.endDate" />
+              <div v-for="error in errors.endDate" :key="error" class="invalid-feedback">
+                {{ error }}
+              </div>
             </div>
           </div>
         </div>
@@ -69,6 +96,9 @@
                 @click="activity.collective = col.key as Collective">
               <i :class="col.icon"></i>
               <span>{{ col.name }}</span>
+            </div>
+            <div v-for="error in errors.collective" :key="error" class="text-danger small mt-1">
+              <i class="fas fa-triangle-exclamation me-1"></i>{{ error }}
             </div>
           </div>
         </div>
@@ -92,29 +122,26 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { ref, onMounted, computed } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { useToast } from 'vue-toastification'
 import { plainToInstance } from 'class-transformer'
 import { Activity, Collective } from '../../entity/activity.ts'
-import { findOne, update } from '../../repository/activity.ts'
+import { create, findOne, update } from '../../repository/activity.ts'
+import { collectives } from '../../utils/generalVars.ts'
 
 const route = useRoute()
-const id = route.params.id as string
+const router = useRouter()
+const toast = useToast()
+
+const id = route.params.id as string | undefined
+const isNew = computed(() => !route.params.id)
 
 const loading = ref(true)
 const saving = ref(false)
-const toast = useToast()
-
 const activity = ref<Activity>(plainToInstance(Activity, {}))
 const volunteers = ref<any[]>([])
-
-const collectives = [
-  { key: 'ciudadanos', icon: 'fas fa-city',           name: 'Ciudadanos' },
-  { key: 'mayores',    icon: 'fas fa-user-clock',      name: 'Mayores'   },
-  { key: 'jovenes',   icon: 'fas fa-graduation-cap',  name: 'Jóvenes'   },
-  { key: 'mujeres',   icon: 'fas fa-venus',            name: 'Mujeres'   },
-]
+const errors = ref<Record<string, string[]>>({})
 
 const toDatetimeLocal = (iso: string) => {
   if (!iso) return ''
@@ -122,13 +149,17 @@ const toDatetimeLocal = (iso: string) => {
 }
 
 onMounted(() => {
-  findOne(id)
-      .then(data => {
-        data.startDate = toDatetimeLocal(data.startDate ?? '')
-        data.endDate   = toDatetimeLocal(data.endDate ?? '')
-        activity.value = data
-        loading.value  = false
-      })
+  if (!isNew.value) {
+    findOne(id!)
+        .then(data => {
+          data.startDate = toDatetimeLocal(data.startDate ?? '')
+          data.endDate   = toDatetimeLocal(data.endDate ?? '')
+          activity.value = data
+          loading.value  = false
+        })
+  } else {
+    loading.value = false
+  }
 
   fetch('/api/volunteers')
       .then(res => res.json())
@@ -137,11 +168,44 @@ onMounted(() => {
       })
 })
 
-function save() {
+function handleCreate() {
   saving.value = true
-  update(id, activity.value)
-      .then(() => toast.success('Actividad guardada correctamente'))
-      .catch(err => toast.error(err.message))
-      .finally(() => saving.value = false)
+  errors.value = {}
+  create(activity.value)
+      .then(data => {
+        saving.value = false
+        toast.success('Actividad creada correctamente')
+        router.push(`/intranet/actividades/${data.id}`)
+      })
+      .catch(err => {
+        saving.value = false
+        if (typeof err === 'object' && !(err instanceof Error)) {
+          errors.value = err
+        } else {
+          toast.error(err.message)
+        }
+      })
+}
+
+function handleUpdate() {
+  saving.value = true
+  errors.value = {}
+  const idUpdate = router.currentRoute.value.params.id
+  update(idUpdate as any, activity.value)
+      .then(data => {
+        activity.value = data
+        activity.value.startDate = toDatetimeLocal(data.startDate ?? '')
+        activity.value.endDate   = toDatetimeLocal(data.endDate ?? '')
+        saving.value = false
+        toast.success('Actividad guardada correctamente')
+      })
+      .catch(err => {
+        saving.value = false
+        if (typeof err === 'object' && !(err instanceof Error)) {
+          errors.value = err
+        } else {
+          toast.error(err.message)
+        }
+      })
 }
 </script>

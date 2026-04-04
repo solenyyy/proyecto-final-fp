@@ -5,9 +5,9 @@
         <h2 class="page-title">Voluntari@s</h2>
         <p class="page-subtitle">Listado de voluntari@s registrados</p>
       </div>
-      <button class="btn btn-primary">
-        <i class="fas fa-plus me-2"></i>Nuevo voluntari@
-      </button>
+      <RouterLink to="/intranet/voluntarios/nueva" class="btn btn-primary">
+        <i class="fas fa-plus me-2"></i>Nuevo voluntario
+      </RouterLink>
     </div>
 
     <div v-if="loading" class="table-loading">
@@ -60,9 +60,9 @@
               <span class="activity-count">{{ vol.activitiesCount ?? 0 }}</span>
             </td>
             <td>
-              <button class="btn btn-sm btn-ghost">
+              <RouterLink :to="`/intranet/voluntarios/${vol.id}`" class="btn btn-sm btn-ghost">
                 <i class="fas fa-pen"></i>
-              </button>
+              </RouterLink>
             </td>
           </tr>
           </tbody>

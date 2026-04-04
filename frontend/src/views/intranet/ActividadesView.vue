@@ -5,8 +5,9 @@
         <h2 class="page-title">Actividades</h2>
         <p class="page-subtitle">Gestión de actividades por colectivo</p>
       </div>
-      <button class="btn btn-primary"><i class="fas fa-plus me-2"></i> Nueva actividad
-      </button>
+      <RouterLink to="/intranet/actividades/nueva" class="btn btn-primary">
+        <i class="fas fa-plus me-2"></i>Nueva actividad
+      </RouterLink>
     </div>
 
     <div class="row g-3 mb-4">

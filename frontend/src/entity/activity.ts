@@ -13,22 +13,17 @@ export class Activity {
     public id: number | null = null
 
     @Expose({ groups: ['default'] })
-    @IsString({ groups: ['update'] })
     @IsNotEmpty({ message: 'El nombre es obligatorio', groups: ['update'] })
     public name: string | null = null
 
     @Expose({ groups: ['default'] })
-    @IsString({ groups: ['update'] })
-    @IsOptional({ groups: ['update'] })
     public description: string | null = null
 
     @Expose({ groups: ['default'] })
-    @IsDateString({}, { groups: ['update'] })
     @IsNotEmpty({ message: 'La fecha de inicio es obligatoria', groups: ['update'] })
     public startDate: string | null = null
 
     @Expose({ groups: ['default'] })
-    @IsDateString({}, { groups: ['update'] })
     @IsNotEmpty({ message: 'La fecha de fin es obligatoria', groups: ['update'] })
     public endDate: string | null = null
 
