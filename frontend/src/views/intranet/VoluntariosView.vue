@@ -74,16 +74,16 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
+import {findAll} from "../../repository/volunteer.ts";
 
 const loading = ref(true)
 const volunteers = ref<any[]>([])
 const search = ref('')
 
 onMounted(() => {
-  fetch('/api/volunteers')
-      .then(res => res.json())
-      .then((data) => {
-        volunteers.value = data['member'] ?? []
+  findAll()
+      .then(data => {
+        volunteers.value = data
         loading.value = false
       })
 })

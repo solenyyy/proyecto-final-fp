@@ -1,6 +1,7 @@
 import { plainToInstance } from 'class-transformer'
 import { validate, ValidationError } from 'class-validator'
 import { Volunteer } from '../entity/volunteer'
+import { authFetch } from '../services/auth'
 
 function formatErrors(errors: ValidationError[]): Record<string, string[]> {
     return errors.reduce((acc, err) => {
@@ -10,7 +11,7 @@ function formatErrors(errors: ValidationError[]): Record<string, string[]> {
 }
 
 export function findAll(): Promise<Volunteer[]> {
-    return fetch('/api/volunteers')
+    return authFetch('/api/volunteers')
         .then(res => res.json())
         .then(data => plainToInstance(Volunteer, data['member'] as object[], {
             groups: ['default'],
@@ -19,7 +20,7 @@ export function findAll(): Promise<Volunteer[]> {
 }
 
 export function findOne(id: number | string): Promise<Volunteer> {
-    return fetch(`/api/volunteers/${id}`)
+    return authFetch(`/api/volunteers/${id}`)
         .then(res => res.json())
         .then(data => plainToInstance(Volunteer, data, {
             groups: ['default'],
@@ -32,7 +33,7 @@ export function create(volunteer: Volunteer): Promise<Volunteer> {
         .then(errors => {
             if (errors.length > 0) throw formatErrors(errors)
         })
-        .then(() => fetch('/api/volunteers', {
+        .then(() => authFetch('/api/volunteers', {
             method: 'POST',
             headers: { 'Content-Type': 'application/ld+json' },
             body: JSON.stringify({
@@ -55,7 +56,7 @@ export function update(id: number | string, volunteer: Volunteer): Promise<Volun
         .then(errors => {
             if (errors.length > 0) throw formatErrors(errors)
         })
-        .then(() => fetch(`/api/volunteers/${id}`, {
+        .then(() => authFetch(`/api/volunteers/${id}`, {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/merge-patch+json' },
             body: JSON.stringify({
@@ -74,7 +75,7 @@ export function update(id: number | string, volunteer: Volunteer): Promise<Volun
 }
 
 export function remove(id: number | string): Promise<void> {
-    return fetch(`/api/volunteers/${id}`, {
+    return authFetch(`/api/volunteers/${id}`, {
         method: 'DELETE',
     })
         .then(res => {

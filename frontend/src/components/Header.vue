@@ -16,6 +16,31 @@
           </li>
         </ul>
       </div>
+      <RouterLink v-if="!authenticated" to="/login" class="btn btn-primary btn-sm px-3">
+        <i class="fas fa-right-to-bracket me-2"></i>Conéctate
+      </RouterLink>
+      <div v-else class="d-flex align-items-center gap-2">
+        <span class="text-muted small">{{ coordinatorName }}</span>
+        <button class="btn btn-outline-secondary btn-sm" @click="handleLogout">
+          <i class="fas fa-right-from-bracket me-2"></i>Salir
+        </button>
+      </div>
     </div>
   </nav>
 </template>
+
+<script lang="ts" setup>
+import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import { isAuthenticated, logout } from '../services/auth'
+
+const router = useRouter()
+const authenticated = ref(isAuthenticated())
+const coordinatorName = ref(localStorage.getItem('coordinatorName') ?? '')
+
+function handleLogout() {
+  logout()
+  authenticated.value = false
+  router.push('/')
+}
+</script>

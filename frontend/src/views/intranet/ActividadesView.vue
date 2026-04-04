@@ -89,7 +89,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { getActivities } from '../../utils/api.ts'
+import {findAll} from "../../repository/activity.ts";
 
 const loading = ref(true)
 const activities = ref<any[]>([])
@@ -104,11 +104,11 @@ const collectives = [
 ]
 
 onMounted(() => {
-  getActivities()
-      .then((data: any) => {
+  findAll()
+      .then(data => {
         activities.value = data
         loading.value = false
-  })
+      })
 })
 
 const filtered = computed(() => {

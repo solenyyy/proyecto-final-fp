@@ -1,10 +1,15 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { getToken } from '../services/auth'
 
 const routes = [
     {
         path: '/',
         name: 'home',
         component: () => import('../views/HomeView.vue')
+    },
+    {
+        path: '/login',
+        component: () => import('../views/LoginView.vue')
     },
     {
         path: '/intranet',
@@ -47,5 +52,12 @@ export const router = createRouter({
     routes,
     scrollBehavior() {
         return { top: 0 }
+    }
+})
+
+router.beforeEach((to) => {
+    const isIntranet = to.path.startsWith('/intranet')
+    if (isIntranet && !getToken()) {
+        return '/login'
     }
 })
