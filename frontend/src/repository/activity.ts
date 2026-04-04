@@ -74,3 +74,12 @@ export function update(id: number | string, activity: Activity): Promise<Activit
             excludeExtraneousValues: true
         }))
 }
+
+export function remove(id: number | string): Promise<void> {
+    return fetch(`/api/activities/${id}`, {
+        method: 'DELETE',
+    })
+        .then(res => {
+            if (!res.ok) throw new Error('Error al eliminar la actividad')
+        })
+}

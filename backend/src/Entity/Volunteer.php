@@ -7,6 +7,7 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Delete;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -20,7 +21,8 @@ use Doctrine\Common\Collections\Collection;
         new Get(normalizationContext: ['groups' => ['volunteer:read']]),
         new GetCollection(normalizationContext: ['groups' => ['volunteer:read']]),
         new Post(normalizationContext: ['groups' => ['volunteer:read']], denormalizationContext: ['groups' => ['volunteer:write']]),
-        new Patch(normalizationContext: ['groups' => ['volunteer:read']], denormalizationContext: ['groups' => ['volunteer:write']])
+        new Patch(normalizationContext: ['groups' => ['volunteer:read']], denormalizationContext: ['groups' => ['volunteer:write']]),
+        new Delete(),
     ]
 )]
 class Volunteer

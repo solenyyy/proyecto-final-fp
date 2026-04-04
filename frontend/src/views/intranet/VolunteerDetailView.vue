@@ -7,25 +7,34 @@
           <i class="fas fa-arrow-left"></i>
         </RouterLink>
         <div>
-          <h2 class="page-title mb-0">{{ volunteer.name || 'Voluntario' }}</h2>
-          <p class="page-subtitle mb-0">{{ isNew ? 'Nuevo voluntario' : `Editando voluntario #${id}` }}</p>
+          <h2 class="page-title mb-0">{{ volunteer.name || 'Voluntari@' }}</h2>
+          <p class="page-subtitle mb-0">{{ isNew ? 'Nuevo voluntari@' : `Editando voluntari@ #${id}` }}</p>
         </div>
       </div>
       <div class="d-flex gap-2 align-items-center">
         <button v-if="isNew" class="btn btn-primary" @click="handleCreate" :disabled="saving">
           <i class="fas fa-plus me-2"></i>
-          {{ saving ? 'Creando...' : 'Crear voluntario' }}
+          {{ saving ? 'Creando...' : 'Crear voluntari@' }}
         </button>
         <button v-else class="btn btn-primary" @click="handleUpdate" :disabled="saving">
           <i class="fas fa-floppy-disk me-2"></i>
           {{ saving ? 'Guardando...' : 'Guardar cambios' }}
         </button>
+        <button v-if="!isNew" class="btn btn-outline-danger" @click="showConfirm = true" :disabled="saving">
+          <i class="fas fa-trash me-2"></i>Eliminar
+        </button>
+        <ModalConfirm
+            v-model="showConfirm"
+            title="¿Eliminar voluntari@?"
+            message="Esta acción no tiene vuelta atrás, ¿estás segur@?"
+            @confirm="handleDelete"
+        />
       </div>
     </div>
 
     <div v-if="loading" class="table-loading">
       <div class="spinner-border text-primary" role="status"></div>
-      <span>Cargando voluntario...</span>
+      <span>Cargando voluntari@...</span>
     </div>
 
     <div v-else class="row g-4">
@@ -70,7 +79,7 @@
               <textarea class="form-control"
                         :class="{ 'is-invalid': errors.bio?.length }"
                         rows="3" v-model="volunteer.bio"
-                        placeholder="Cuéntanos algo sobre este voluntario..."></textarea>
+                        placeholder="Cuéntanos algo sobre este voluntari@..."></textarea>
               <div v-for="error in errors.bio" :key="error" class="invalid-feedback">{{ error }}</div>
             </div>
           </div>
@@ -150,8 +159,9 @@ import { useRoute, useRouter } from 'vue-router'
 import { useToast } from 'vue-toastification'
 import { plainToInstance } from 'class-transformer'
 import { Volunteer } from '../../entity/volunteer.ts'
-import { create, findOne, update } from '../../repository/volunteer.ts'
+import { create, findOne, update, remove } from '../../repository/volunteer.ts'
 import { collectives } from '../../utils/generalVars.ts'
+import ModalConfirm from "../../components/ModalConfirm.vue";
 
 const route = useRoute()
 const router = useRouter()
@@ -165,6 +175,7 @@ const saving = ref(false)
 const volunteer = ref<Volunteer>(plainToInstance(Volunteer, {}))
 const activities = ref<any[]>([])
 const errors = ref<Record<string, string[]>>({})
+const showConfirm = ref(false)
 
 const collectiveLabel = (key: string) => collectives.find(c => c.key === key)?.name ?? key
 const collectiveIcon  = (key: string) => collectives.find(c => c.key === key)?.icon ?? 'fas fa-tag'
@@ -177,6 +188,19 @@ const formatDate = (iso: string | null) => {
 const toDateLocal = (iso: string) => {
   if (!iso) return ''
   return new Date(iso).toISOString().slice(0, 10)
+}
+
+function handleDelete() {
+  saving.value = true
+  remove(id!)
+      .then(() => {
+        toast.success('Voluntari@ eliminado correctamente')
+        router.push('/intranet/voluntarios')
+      })
+      .catch((err) => {
+        saving.value = false
+        toast.error(err.message)
+      })
 }
 
 onMounted(() => {

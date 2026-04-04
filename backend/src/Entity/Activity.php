@@ -7,6 +7,7 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Doctrine\Orm\Filter\DateFilter;
 use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
@@ -28,7 +29,8 @@ use App\Enum\Collective;
             provider: ActivityCollectionProvider::class
         ),
         new Post(normalizationContext: ['groups' => ['activity:read']], denormalizationContext: ['groups' => ['activity:write']]),
-        new Patch(normalizationContext: ['groups' => ['activity:read']], denormalizationContext: ['groups' => ['activity:write']])
+        new Patch(normalizationContext: ['groups' => ['activity:read']], denormalizationContext: ['groups' => ['activity:write']]),
+        new Delete(),
     ]
 )]
 #[ApiFilter(SearchFilter::class, properties: [

@@ -6,7 +6,7 @@
         <p class="page-subtitle">Listado de voluntari@s registrados</p>
       </div>
       <RouterLink to="/intranet/voluntarios/nueva" class="btn btn-primary">
-        <i class="fas fa-plus me-2"></i>Nuevo voluntario
+        <i class="fas fa-plus me-2"></i>Nuevo voluntari@
       </RouterLink>
     </div>
 

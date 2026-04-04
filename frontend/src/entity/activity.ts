@@ -1,5 +1,5 @@
 import { Expose, Transform } from 'class-transformer'
-import { IsString, IsNotEmpty, IsEnum, IsOptional, IsDateString } from 'class-validator'
+import { IsNotEmpty, IsEnum, IsOptional } from 'class-validator'
 
 export enum Collective {
     CIUDADANOS = 'ciudadanos',

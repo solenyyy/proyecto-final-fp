@@ -20,6 +20,16 @@
           <i class="fas fa-floppy-disk me-2"></i>
           {{ saving ? 'Guardando...' : 'Guardar cambios' }}
         </button>
+        <button v-if="!isNew" class="btn btn-outline-danger" @click="showConfirm = true" :disabled="saving">
+          <i class="fas fa-trash me-2"></i>Eliminar
+        </button>
+
+        <ModalConfirm
+            v-model="showConfirm"
+            title="¿Eliminar actividad?"
+            message="Esta acción no tiene vuelta atrás, ¿estás segur@?"
+            @confirm="handleDelete"
+        />
       </div>
     </div>
 
@@ -127,8 +137,10 @@ import { useRoute, useRouter } from 'vue-router'
 import { useToast } from 'vue-toastification'
 import { plainToInstance } from 'class-transformer'
 import { Activity, Collective } from '../../entity/activity.ts'
-import { create, findOne, update } from '../../repository/activity.ts'
 import { collectives } from '../../utils/generalVars.ts'
+import ConfirmModal from '../../components/ModalConfirm.vue'
+import { create, findOne, update, remove } from '../../repository/activity.ts'
+import ModalConfirm from "../../components/ModalConfirm.vue";
 
 const route = useRoute()
 const router = useRouter()
@@ -142,6 +154,20 @@ const saving = ref(false)
 const activity = ref<Activity>(plainToInstance(Activity, {}))
 const volunteers = ref<any[]>([])
 const errors = ref<Record<string, string[]>>({})
+const showConfirm = ref(false)
+
+function handleDelete() {
+  saving.value = true
+  remove(id!)
+      .then(() => {
+        toast.success('Actividad eliminada correctamente')
+        router.push('/intranet/actividades')
+      })
+      .catch(err => {
+        saving.value = false
+        toast.error(err.message)
+      })
+}
 
 const toDatetimeLocal = (iso: string) => {
   if (!iso) return ''
