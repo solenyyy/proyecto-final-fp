@@ -19,6 +19,10 @@ const routes = [
                 component: () => import('../views/intranet/ActividadesView.vue')
             },
             {
+                path: 'actividades/:id',
+                component: () => import('../views/intranet/ActivityDetailView.vue')
+            },
+            {
                 path: 'voluntarios',
                 component: () => import('../views/intranet/VoluntariosView.vue')
             }

@@ -82,7 +82,7 @@ const search = ref('')
 onMounted(() => {
   fetch('/api/volunteers')
       .then(res => res.json())
-      .then(data => {
+      .then((data) => {
         volunteers.value = data['member'] ?? []
         loading.value = false
       })

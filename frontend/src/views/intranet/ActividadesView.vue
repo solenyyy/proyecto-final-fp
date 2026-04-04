@@ -75,8 +75,9 @@
             <td>{{ formatDate(act.startDate) }}</td>
             <td>{{ formatDate(act.endDate) }}</td>
             <td>
-              <button class="btn btn-sm btn-ghost"><i class="fas fa-pen"></i></button>
-            </td>
+              <RouterLink :to="`/intranet/actividades/${act.id}`" class="btn btn-sm btn-ghost">
+                <i class="fas fa-pen"></i>
+              </RouterLink>            </td>
           </tr>
           </tbody>
         </table>
