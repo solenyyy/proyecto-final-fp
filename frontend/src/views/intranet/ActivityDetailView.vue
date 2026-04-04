@@ -46,7 +46,7 @@
           </div>
 
           <div class="mb-3">
-            <label class="form-label">Descripción</label>
+            <label class="form-label">Descripción *</label>
             <textarea class="form-control"
                       :class="{ 'is-invalid': errors.description?.length }"
                       rows="4" v-model="activity.description"

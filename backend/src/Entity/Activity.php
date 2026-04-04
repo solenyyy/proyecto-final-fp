@@ -12,16 +12,21 @@ use ApiPlatform\Doctrine\Orm\Filter\DateFilter;
 use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\ActivityRepository;
+use App\State\ActivityCollectionProvider;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Serializer\Annotation\Groups;
 use App\Enum\Collective;
 
+#[ORM\Entity(repositoryClass: ActivityRepository::class)]
 #[ORM\Table(name: "activities")]
-#[ORM\Entity]
 #[ApiResource(
     operations: [
         new Get(normalizationContext: ['groups' => ['activity:read']]),
-        new GetCollection(normalizationContext: ['groups' => ['activity:read']]),
+        new GetCollection(
+            normalizationContext: ['groups' => ['activity:read']],
+            provider: ActivityCollectionProvider::class
+        ),
         new Post(normalizationContext: ['groups' => ['activity:read']], denormalizationContext: ['groups' => ['activity:write']]),
         new Patch(normalizationContext: ['groups' => ['activity:read']], denormalizationContext: ['groups' => ['activity:write']])
     ]

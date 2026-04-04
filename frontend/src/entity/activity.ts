@@ -17,6 +17,7 @@ export class Activity {
     public name: string | null = null
 
     @Expose({ groups: ['default'] })
+    @IsNotEmpty({ message: 'La descripción es obligatoria', groups: ['update'] })
     public description: string | null = null
 
     @Expose({ groups: ['default'] })
