@@ -6,9 +6,6 @@ use App\Entity\Activity;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
-/**
- * @extends ServiceEntityRepository<Activity>
- */
 class ActivityRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
@@ -16,28 +13,24 @@ class ActivityRepository extends ServiceEntityRepository
         parent::__construct($registry, Activity::class);
     }
 
-    //    /**
-    //     * @return Activity[] Returns an array of Activity objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('a')
-    //            ->andWhere('a.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('a.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    public function findAllOrderedByProximity(): array
+    {
+        $now = new \DateTime();
 
-    //    public function findOneBySomeField($value): ?Activity
-    //    {
-    //        return $this->createQueryBuilder('a')
-    //            ->andWhere('a.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+        $upcoming = $this->createQueryBuilder('a')
+            ->where('a.startDate >= :now')
+            ->setParameter('now', $now)
+            ->orderBy('a.startDate', 'ASC')
+            ->getQuery()
+            ->getResult();
+
+        $past = $this->createQueryBuilder('a')
+            ->where('a.startDate < :now')
+            ->setParameter('now', $now)
+            ->orderBy('a.startDate', 'DESC')
+            ->getQuery()
+            ->getResult();
+
+        return array_merge($upcoming, $past);
+    }
 }

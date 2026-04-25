@@ -7,18 +7,22 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Delete;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 
 #[ORM\Entity]
+#[ORM\Table(name: "volunteers")]
 #[ApiResource(
     operations: [
         new Get(normalizationContext: ['groups' => ['volunteer:read']]),
         new GetCollection(normalizationContext: ['groups' => ['volunteer:read']]),
         new Post(normalizationContext: ['groups' => ['volunteer:read']], denormalizationContext: ['groups' => ['volunteer:write']]),
-        new Patch(normalizationContext: ['groups' => ['volunteer:read']], denormalizationContext: ['groups' => ['volunteer:write']])
+        new Patch(normalizationContext: ['groups' => ['volunteer:read']], denormalizationContext: ['groups' => ['volunteer:write']]),
+        new Delete(),
     ]
 )]
 class Volunteer
@@ -30,50 +34,58 @@ class Volunteer
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['volunteer:read', 'volunteer:write'])]
+    #[Groups(['volunteer:read', 'volunteer:write', 'activity:read'])]
     private ?string $name = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     #[Groups(['volunteer:read', 'volunteer:write'])]
     private ?string $email = null;
 
+    #[ORM\Column(length: 20)]
+    #[Assert\NotBlank(message: "El DNI o NIE es obligatorio")]
+    #[Groups(['volunteer:read', 'volunteer:write'])]
+    private ?string $dniNie = null;
+
+    #[ORM\Column(type: 'text', nullable: true)]
+    #[Groups(['volunteer:read', 'volunteer:write'])]
+    private ?string $bio = null;
+
+    #[ORM\Column(type: 'date')]
+    #[Assert\NotNull(message: "La fecha de nacimiento es obligatoria")]
+    #[Groups(['volunteer:read', 'volunteer:write'])]
+    private ?\DateTimeInterface $birthDate = null;
+
     #[ORM\OneToMany(mappedBy: 'volunteer', targetEntity: Activity::class, cascade: ['persist', 'remove'])]
     private Collection $activities;
 
-public function __construct()
-{
-    $this->activities = new ArrayCollection();
-}
-
-/**
- * @return Collection<int, Activity>
- */
-public function getActivities(): Collection
-{
-    return $this->activities;
-}
-
-public function addActivity(Activity $activity): self
-{
-    if (!$this->activities->contains($activity)) {
-        $this->activities->add($activity);
-        $activity->setVolunteer($this);
+    public function __construct()
+    {
+        $this->activities = new ArrayCollection();
     }
 
-    return $this;
-}
+    public function getActivities(): Collection
+    {
+        return $this->activities;
+    }
 
-public function removeActivity(Activity $activity): self
-{
-    if ($this->activities->removeElement($activity)) {
-        if ($activity->getVolunteer() === $this) {
-            $activity->setVolunteer(null);
+    public function addActivity(Activity $activity): self
+    {
+        if (!$this->activities->contains($activity)) {
+            $this->activities->add($activity);
+            $activity->setVolunteer($this);
         }
+        return $this;
     }
 
-    return $this;
-}
-
+    public function removeActivity(Activity $activity): self
+    {
+        if ($this->activities->removeElement($activity)) {
+            if ($activity->getVolunteer() === $this) {
+                $activity->setVolunteer(null);
+            }
+        }
+        return $this;
+    }
 
     public function getId(): ?int
     {
@@ -100,5 +112,44 @@ public function removeActivity(Activity $activity): self
     {
         $this->email = $email;
         return $this;
+    }
+
+    public function getDniNie(): ?string
+    {
+        return $this->dniNie;
+    }
+
+    public function setDniNie(string $dniNie): self
+    {
+        $this->dniNie = $dniNie;
+        return $this;
+    }
+
+    public function getBio(): ?string
+    {
+        return $this->bio;
+    }
+
+    public function setBio(?string $bio): self
+    {
+        $this->bio = $bio;
+        return $this;
+    }
+
+    public function getBirthDate(): ?\DateTimeInterface
+    {
+        return $this->birthDate;
+    }
+
+    public function setBirthDate(\DateTimeInterface $birthDate): self
+    {
+        $this->birthDate = $birthDate;
+        return $this;
+    }
+
+    #[Groups(['volunteer:read'])]
+    public function getActivitiesCount(): int
+    {
+        return $this->activities->count();
     }
 }

@@ -8,9 +8,12 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Patch;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\CoordinatorRepository;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
-#[ORM\Entity]
+#[ORM\Entity(repositoryClass: CoordinatorRepository::class)]
 #[ApiResource(
     operations: [
         new Get(normalizationContext: ['groups' => ['coordinator:read']]),
@@ -19,7 +22,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
         new Patch(normalizationContext: ['groups' => ['coordinator:read']], denormalizationContext: ['groups' => ['coordinator:write']])
     ]
 )]
-class Coordinator
+class Coordinator implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -31,9 +34,12 @@ class Coordinator
     #[Groups(['coordinator:read', 'coordinator:write'])]
     private ?string $name = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
+    #[ORM\Column(length: 255, unique: true)]
     #[Groups(['coordinator:read', 'coordinator:write'])]
     private ?string $email = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $password = null;
 
     public function getId(): ?int
     {
@@ -61,4 +67,27 @@ class Coordinator
         $this->email = $email;
         return $this;
     }
+
+    public function getPassword(): ?string
+    {
+        return $this->password;
+    }
+
+    public function setPassword(string $password): self
+    {
+        $this->password = $password;
+        return $this;
+    }
+
+    public function getUserIdentifier(): string
+    {
+        return (string) $this->email;
+    }
+
+    public function getRoles(): array
+    {
+        return ['ROLE_COORDINATOR'];
+    }
+
+    public function eraseCredentials(): void {}
 }
