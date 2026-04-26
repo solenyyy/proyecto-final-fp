@@ -150,8 +150,8 @@
   font-weight: 600;
 }
 .btn-primary:hover { background: #c94d1a; border-color: #c94d1a; }
-.btn-outline-primary { border-color: var(--primary); color: var(--primary); border-radius: 10px; font-weight: 600; }
-.btn-outline-primary:hover { background: var(--primary); color: white; }
+.btn-outline-primary { border-color: var(--primary); color: var(--primary)!important; border-radius: 10px; font-weight: 600; }
+.btn-outline-primary:hover, .btn-outline-primary:active, .btn-outline-primary:focus  { background: var(--primary); color: white!important; }
 .btn-outline-secondary { border-radius: 10px; font-weight: 600; }
 
 .footer { background: var(--dark); color: #aaa; }

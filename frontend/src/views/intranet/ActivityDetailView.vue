@@ -1,8 +1,8 @@
 <template>
   <div class="intranet-page">
 
-    <div class="page-header">
-      <div class="d-flex align-items-center gap-3">
+    <div class="page-header d-flex flex-column flex-md-row align-items-center gap-3">
+      <div class="d-flex align-items-center gap-3 flex-grow-1 w-100">
         <RouterLink to="/intranet/actividades" class="btn btn-outline-secondary btn-sm">
           <i class="fas fa-arrow-left"></i>
         </RouterLink>
@@ -32,7 +32,6 @@
         />
       </div>
     </div>
-
     <div v-if="loading" class="table-loading">
       <div class="spinner-border text-primary" role="status"></div>
       <span>Cargando actividad...</span>
