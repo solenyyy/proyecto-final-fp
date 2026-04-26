@@ -1,7 +1,7 @@
 <template>
   <aside class="sidebar" :class="{ 'sidebar--open': open }">
     <div class="d-flex d-lg-none justify-content-end p-2">
-      <button class="btn btn-ghost btn-sm" @click="$emit('close')">
+      <button class="btn btn-ghost btn-sm text-white" @click="$emit('close')">
         <i class="fas fa-xmark"></i>
       </button>
     </div>
@@ -41,7 +41,7 @@ defineEmits(['close'])
     top: 0;
     left: 0;
     height: 100vh;
-    z-index: 100;
+    z-index: 9999;
     transform: translateX(-100%);
     transition: transform 0.25s ease;
   }

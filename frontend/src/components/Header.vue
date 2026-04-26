@@ -8,16 +8,16 @@
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navMenu">
-        <ul class="navbar-nav ms-auto gap-2">
+        <ul class="navbar-nav mx-auto gap-2 text-center">
           <li class="nav-item"><a class="nav-link" href="#about">Sobre nosotros</a></li>
           <li class="nav-item"><a class="nav-link" href="#how">Cómo funciona</a></li>
-          <li class="nav-item">
+          <li class="nav-item d-flex justify-content-center mb-3 mb-lg-0">
             <a class="nav-link btn btn-outline-primary px-3" href="#signup">Únete</a>
           </li>
         </ul>
       </div>
 
-      <RouterLink v-if="!authenticated" to="/login" class="btn btn-primary btn-sm px-3">
+      <RouterLink v-if="!authenticated" to="/login" class="btn btn-primary btn-sm px-3 mx-auto">
         <i class="fas fa-right-to-bracket me-2"></i>Conéctate
       </RouterLink>
 
