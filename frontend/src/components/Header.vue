@@ -1,30 +1,23 @@
 <template>
   <nav class="navbar navbar-expand-lg sticky-top">
     <div class="container">
+
       <a class="navbar-brand fw-bold" href="#">
         <span class="brand-icon">❤️</span> VolunTrack
       </a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navMenu">
-        <ul class="navbar-nav mx-auto gap-2 text-center">
-          <li class="nav-item"><a class="nav-link" href="#about">Sobre nosotros</a></li>
-          <li class="nav-item"><a class="nav-link" href="#how">Cómo funciona</a></li>
-          <li class="nav-item d-flex justify-content-center mb-3 mb-lg-0">
-            <a class="nav-link btn btn-outline-primary px-3" href="#signup">Únete</a>
-          </li>
-        </ul>
-      </div>
 
-      <RouterLink v-if="!authenticated" to="/login" class="btn btn-primary btn-sm px-3 mx-auto">
-        <i class="fas fa-right-to-bracket me-2"></i>Conéctate
-      </RouterLink>
+      <div class="d-flex align-items-center gap-2 ms-auto order-lg-3">
 
-      <div v-else class="d-flex align-items-center gap-2">
-        <span class="text-muted small d-none d-md-block">{{ coordinatorName }}</span>
+        <RouterLink
+            v-if="!authenticated"
+            to="/login"
+            class="btn btn-primary btn-sm px-3"
+        >
+          <i class="fas fa-right-to-bracket me-2"></i>
+          Conéctate
+        </RouterLink>
 
-        <div class="dropdown">
+        <div v-else class="dropdown">
           <button
               class="btn btn-ghost btn-sm rounded-circle apps-btn"
               data-bs-toggle="dropdown"
@@ -37,29 +30,68 @@
 
           <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 rounded-3 p-2">
             <li>
-              <RouterLink to="/intranet/actividades" class="dropdown-item rounded-2 d-flex align-items-center gap-2">
+              <RouterLink
+                  to="/intranet/actividades"
+                  class="dropdown-item rounded-2 d-flex align-items-center gap-2"
+              >
                 <span class="item-icon bg-body-secondary rounded-2">
                   <i class="fas fa-lock"></i>
                 </span>
                 Intranet
               </RouterLink>
             </li>
+
             <li><hr class="dropdown-divider"></li>
+
             <li>
-              <button class="dropdown-item rounded-2 d-flex align-items-center gap-2 text-danger" @click="handleLogout">
-                <span class="item-icon rounded-2" style="background: rgba(220,53,69,.1)">
+              <button
+                  class="dropdown-item rounded-2 d-flex align-items-center gap-2 text-danger"
+                  @click="handleLogout"
+              >
+                <span
+                    class="item-icon rounded-2"
+                    style="background: rgba(220,53,69,.1)"
+                >
                   <i class="fas fa-right-from-bracket"></i>
                 </span>
+
                 Salir
               </button>
             </li>
           </ul>
         </div>
+
+        <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navMenu"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
       </div>
+
+      <div class="collapse navbar-collapse order-lg-2" id="navMenu">
+        <ul class="navbar-nav mx-auto gap-2 text-center">
+          <li class="nav-item">
+            <a class="nav-link" href="#about">Sobre nosotros</a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" href="#how">Cómo funciona</a>
+          </li>
+
+          <li class="nav-item d-flex justify-content-center mb-3 mb-lg-0">
+            <a class="nav-link btn btn-outline-primary px-3" href="#signup">
+              Únete
+            </a>
+          </li>
+        </ul>
+      </div>
+
     </div>
   </nav>
 </template>
-
 <script lang="ts" setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
@@ -90,6 +122,81 @@ function handleLogout() {
   display: grid;
   grid-template-columns: repeat(3, 5px);
   gap: 3px;
+}
+
+.dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.7;
+}
+
+.item-icon {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  flex-shrink: 0;
+}ç.apps-btn {
+   width: 38px;
+   height: 38px;
+   padding: 0;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   border: none;
+   flex-shrink: 0;
+ }
+
+.dots-grid {
+  width: 17px;
+  height: 17px;
+  display: grid;
+  grid-template-columns: repeat(3, 5px);
+  grid-template-rows: repeat(3, 5px);
+  gap: 1px;
+  place-items: center;
+}
+
+.dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.7;
+}
+
+.item-icon {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  flex-shrink: 0;
+}
+.apps-btn {
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  flex-shrink: 0;
+}
+
+.dots-grid {
+  width: 17px;
+  height: 17px;
+  display: grid;
+  grid-template-columns: repeat(3, 5px);
+  grid-template-rows: repeat(3, 5px);
+  gap: 1px;
+  place-items: center;
 }
 
 .dot {
