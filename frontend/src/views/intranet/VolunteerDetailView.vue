@@ -170,6 +170,87 @@
 
     </div>
   </div>
+  <div
+      class="modal fade"
+      tabindex="-1"
+      ref="assignModal"
+  >
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+      <div class="modal-content border-0 rounded-4">
+
+        <div class="modal-header border-0">
+          <h5 class="modal-title fw-bold">
+            Asignar actividad
+          </h5>
+
+          <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+          ></button>
+        </div>
+
+        <div class="modal-body">
+
+          <div v-if="availableActivities.length === 0"
+               class="text-center text-muted py-5">
+            <i class="fas fa-calendar-xmark fa-2x mb-3 d-block"></i>
+            No hay actividades disponibles
+          </div>
+
+          <div v-else class="table-responsive">
+            <table class="table intranet-table align-middle">
+              <thead>
+              <tr>
+                <th>#</th>
+                <th>Nombre</th>
+                <th>Colectivo</th>
+                <th>Inicio</th>
+                <th></th>
+              </tr>
+              </thead>
+
+              <tbody>
+              <tr
+                  v-for="act in availableActivities"
+                  :key="act.id"
+              >
+                <td>#{{ act.id }}</td>
+
+                <td class="fw-semibold">
+                  {{ act.name }}
+                </td>
+
+                <td>
+                <span class="collective-badge" :class="act.collective">
+                  <i :class="collectiveIcon(act.collective)"></i>
+                  {{ collectiveLabel(act.collective) }}
+                </span>
+                </td>
+
+                <td>
+                  {{ formatDate(act.startDate) }}
+                </td>
+
+                <td class="text-end">
+                  <button
+                      class="btn btn-primary btn-sm"
+                      @click="assignActivity(act)"
+                  >
+                    <i class="fas fa-link me-2"></i>
+                    Asignar
+                  </button>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -182,7 +263,12 @@ import { create, findOne, update, remove } from '../../repository/volunteer.ts'
 import { collectives } from '../../utils/generalVars.ts'
 import ModalConfirm from "../../components/ModalConfirm.vue";
 import {findAll} from "../../repository/activity.ts";
+import { Modal } from 'bootstrap'
+import { update as updateActivity } from '../../repository/activity.ts'
 
+const availableActivities = ref<any[]>([])
+const assignModal = ref()
+let modalInstance: Modal
 const route = useRoute()
 const router = useRouter()
 const toast = useToast()
@@ -197,6 +283,50 @@ const activities = ref<any[]>([])
 const errors = ref<Record<string, string[]>>({})
 const showConfirm = ref(false)
 
+onMounted(() => {
+  modalInstance = new Modal(assignModal.value)
+})
+
+function openAssignModal() {
+  findAll({
+    volunteer: 'null'
+  }).then(data => {
+    availableActivities.value = data ?? []
+
+    modalInstance.show()
+  })
+}
+
+function assignActivity(activity: any) {
+  updateActivity(activity.id, {
+    ...activity,
+    volunteer: `/api/volunteers/${id}`
+  })
+      .then(() => {
+        toast.success('Actividad asignada')
+
+        activities.value.push({
+          ...activity,
+          volunteerName: volunteer.value.name
+        })
+
+        availableActivities.value =
+            availableActivities.value.filter(a => a.id !== activity.id)
+      })
+}
+
+function unassignActivity(activity: any) {
+  updateActivity(activity.id, {
+    ...activity,
+    volunteer: null
+  })
+      .then(() => {
+        toast.success('Actividad desasociada')
+
+        activities.value =
+            activities.value.filter(a => a.id !== activity.id)
+      })
+}
 const collectiveLabel = (key: string) => collectives.find(c => c.key === key)?.name ?? key
 const collectiveIcon  = (key: string) => collectives.find(c => c.key === key)?.icon ?? 'fas fa-tag'
 
