@@ -85,10 +85,18 @@
         </div>
 
         <div v-if="!isNew" class="card border-0 shadow-sm rounded-4 p-4">
-          <h6 class="text-uppercase text-muted fw-bold small mb-3">
-            <i class="fas fa-calendar-alt me-2"></i>Actividades asignadas
-            <span class="badge bg-secondary ms-2">{{ activities.length }}</span>
-          </h6>
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h6 class="text-uppercase text-muted fw-bold small mb-0">
+              <i class="fas fa-calendar-alt me-2"></i>
+              Actividades asignadas
+              <span class="badge bg-secondary ms-2">{{ activities.length }}</span>
+            </h6>
+
+            <button class="btn btn-primary btn-sm" @click="openAssignModal">
+              <i class="fas fa-plus me-2"></i>
+              Asignar actividad
+            </button>
+          </div>
           <div v-if="activities.length === 0" class="text-muted text-center py-3">
             <i class="fas fa-calendar-xmark fa-2x mb-2 d-block"></i>
             Sin actividades asignadas
@@ -117,10 +125,22 @@
                 </td>
                 <td>{{ formatDate(act.startDate) }}</td>
                 <td>{{ formatDate(act.endDate) }}</td>
-                <td>
-                  <RouterLink :to="`/intranet/actividades/${act.id}`" class="btn btn-sm btn-ghost">
-                    <i class="fas fa-pen"></i>
-                  </RouterLink>
+                <td class="text-end">
+                  <div class="d-flex justify-content-end gap-2">
+                    <RouterLink
+                        :to="`/intranet/actividades/${act.id}`"
+                        class="btn btn-sm btn-ghost"
+                    >
+                      <i class="fas fa-pen"></i>
+                    </RouterLink>
+
+                    <button
+                        class="btn btn-sm btn-outline-danger"
+                        @click="unassignActivity(act)"
+                    >
+                      <i class="fas fa-link-slash"></i>
+                    </button>
+                  </div>
                 </td>
               </tr>
               </tbody>
