@@ -31,15 +31,15 @@
         />
       </div>
     </div>
+
     <div v-if="loading" class="table-loading">
       <div class="spinner-border text-primary" role="status"></div>
       <span>Cargando voluntari@...</span>
     </div>
 
     <div v-else class="row g-4">
-
       <div class="col-lg-8 d-flex flex-column gap-4">
-
+        <!-- Información personal -->
         <div class="card border-0 shadow-sm rounded-4 p-4">
           <h6 class="text-uppercase text-muted fw-bold small mb-3">
             <i class="fas fa-circle-info me-2"></i>Información personal
@@ -84,6 +84,7 @@
           </div>
         </div>
 
+        <!-- Actividades asignadas -->
         <div v-if="!isNew" class="card border-0 shadow-sm rounded-4 p-4">
           <div class="d-flex justify-content-between align-items-center mb-3">
             <h6 class="text-uppercase text-muted fw-bold small mb-0">
@@ -91,12 +92,12 @@
               Actividades asignadas
               <span class="badge bg-secondary ms-2">{{ activities.length }}</span>
             </h6>
-
             <button class="btn btn-primary btn-sm" @click="openAssignModal">
               <i class="fas fa-plus me-2"></i>
               Asignar actividad
             </button>
           </div>
+
           <div v-if="activities.length === 0" class="text-muted text-center py-3">
             <i class="fas fa-calendar-xmark fa-2x mb-2 d-block"></i>
             Sin actividades asignadas
@@ -127,17 +128,10 @@
                 <td>{{ formatDate(act.endDate) }}</td>
                 <td class="text-end">
                   <div class="d-flex justify-content-end gap-2">
-                    <RouterLink
-                        :to="`/intranet/actividades/${act.id}`"
-                        class="btn btn-sm btn-ghost"
-                    >
+                    <RouterLink :to="`/intranet/actividades/${act.id}`" class="btn btn-sm btn-ghost">
                       <i class="fas fa-pen"></i>
                     </RouterLink>
-
-                    <button
-                        class="btn btn-sm btn-outline-danger"
-                        @click="unassignActivity(act)"
-                    >
+                    <button class="btn btn-sm btn-outline-danger" @click="unassignActivity(act)">
                       <i class="fas fa-link-slash"></i>
                     </button>
                   </div>
@@ -147,9 +141,9 @@
             </table>
           </div>
         </div>
-
       </div>
 
+      <!-- Sidebar -->
       <div v-if="!isNew" class="col-lg-4">
         <div class="card border-0 shadow-sm rounded-4 p-4">
           <h6 class="text-uppercase text-muted fw-bold small mb-3">
@@ -167,37 +161,22 @@
           </div>
         </div>
       </div>
-
     </div>
   </div>
-  <div
-      class="modal fade"
-      tabindex="-1"
-      ref="assignModal"
-  >
+
+  <!-- Modal de Asignar -->
+  <div class="modal fade" tabindex="-1" ref="assignModal">
     <div class="modal-dialog modal-xl modal-dialog-centered">
       <div class="modal-content border-0 rounded-4">
-
         <div class="modal-header border-0">
-          <h5 class="modal-title fw-bold">
-            Asignar actividad
-          </h5>
-
-          <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-          ></button>
+          <h5 class="modal-title fw-bold">Asignar actividad</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
-
         <div class="modal-body">
-
-          <div v-if="availableActivities.length === 0"
-               class="text-center text-muted py-5">
+          <div v-if="availableActivities.length === 0" class="text-center text-muted py-5">
             <i class="fas fa-calendar-xmark fa-2x mb-3 d-block"></i>
             No hay actividades disponibles
           </div>
-
           <div v-else class="table-responsive">
             <table class="table intranet-table align-middle">
               <thead>
@@ -209,45 +188,27 @@
                 <th></th>
               </tr>
               </thead>
-
               <tbody>
-              <tr
-                  v-for="act in availableActivities"
-                  :key="act.id"
-              >
+              <tr v-for="act in availableActivities" :key="act.id">
                 <td>#{{ act.id }}</td>
-
-                <td class="fw-semibold">
-                  {{ act.name }}
-                </td>
-
+                <td class="fw-semibold">{{ act.name }}</td>
                 <td>
                 <span class="collective-badge" :class="act.collective">
                   <i :class="collectiveIcon(act.collective)"></i>
                   {{ collectiveLabel(act.collective) }}
                 </span>
                 </td>
-
-                <td>
-                  {{ formatDate(act.startDate) }}
-                </td>
-
+                <td>{{ formatDate(act.startDate) }}</td>
                 <td class="text-end">
-                  <button
-                      class="btn btn-primary btn-sm"
-                      @click="assignActivity(act)"
-                  >
-                    <i class="fas fa-link me-2"></i>
-                    Asignar
+                  <button class="btn btn-primary btn-sm" @click="assignActivity(act)">
+                    <i class="fas fa-link me-2"></i>Asignar
                   </button>
                 </td>
               </tr>
               </tbody>
             </table>
           </div>
-
         </div>
-
       </div>
     </div>
   </div>
@@ -261,18 +222,20 @@ import { plainToInstance } from 'class-transformer'
 import { Volunteer } from '../../entity/volunteer.ts'
 import { create, findOne, update, remove } from '../../repository/volunteer.ts'
 import { collectives } from '../../utils/generalVars.ts'
-import ModalConfirm from "../../components/ModalConfirm.vue";
-import {findAll, patchVolunteer} from "../../repository/activity.ts";
+import ModalConfirm from "../../components/ModalConfirm.vue"
+import { findAll, patchVolunteer } from "../../repository/activity.ts"
 import { Modal } from 'bootstrap'
+import {useLoading} from "vue-loading-overlay";
 
+const loadingSt = useLoading()
 const availableActivities = ref<any[]>([])
 const assignModal = ref()
 let modalInstance: Modal
+
 const route = useRoute()
 const router = useRouter()
 const toast = useToast()
-const assigning = ref(false)
-const unassigningId = ref<number | null>(null)
+
 const id = route.params.id as string | undefined
 const isNew = computed(() => !route.params.id)
 
@@ -288,40 +251,53 @@ onMounted(() => {
 })
 
 function openAssignModal() {
-  findAll({
-    volunteer: 'null'
-  }).then(data => {
+  findAll({ volunteer: 'null' }).then(data => {
     availableActivities.value = data ?? []
-
     modalInstance.show()
   })
 }
 
 function assignActivity(activity: any) {
+  const loader = loadingSt.show({
+    canCancel: false,
+    color: '#0d6efd',
+    loader: 'dots'
+  })
+
   patchVolunteer(activity.id, `/api/volunteers/${id}`)
       .then(() => {
         toast.success('Actividad asignada')
-
         activities.value.push({ ...activity })
         availableActivities.value = availableActivities.value.filter(a => a.id !== activity.id)
-
         modalInstance.hide()
       })
       .catch(err => {
         toast.error('Error al asignar: ' + err.message)
       })
+      .finally(() => {
+        loader.hide()
+      })
 }
 
 function unassignActivity(activity: any) {
+  const loader = loadingSt.show({
+    canCancel: false,
+    color: '#dc3545',
+    loader: 'bars'
+  })
+
   patchVolunteer(activity.id, null)
       .then(() => {
-        toast.success('Actividad desasociada');
-        activities.value = activities.value.filter(a => a.id !== activity.id);
+        toast.success('Actividad desasociada')
+        activities.value = activities.value.filter(a => a.id !== activity.id)
       })
       .catch(err => {
-        console.error("Error al desasignar:", err);
-        toast.error('No se pudo desasociar la actividad');
-      });
+        console.error("Error al desasignar:", err)
+        toast.error('No se pudo desasociar la actividad')
+      })
+      .finally(() => {
+        loader.hide()
+      })
 }
 
 const collectiveLabel = (key: string) => collectives.find(c => c.key === key)?.name ?? key
@@ -359,9 +335,7 @@ onMounted(() => {
           loading.value = false
         })
 
-    findAll({
-      'volunteer.id': id
-    })
+    findAll({ 'volunteer.id': id })
         .then(data => {
           activities.value = data ?? []
         })
