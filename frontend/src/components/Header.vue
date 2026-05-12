@@ -99,7 +99,6 @@ import { isAuthenticated, logout } from '../services/auth'
 
 const router = useRouter()
 const authenticated = ref(isAuthenticated())
-const coordinatorName = ref(localStorage.getItem('coordinatorName') ?? '')
 
 function handleLogout() {
   logout()
