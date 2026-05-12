@@ -262,9 +262,8 @@ import { Volunteer } from '../../entity/volunteer.ts'
 import { create, findOne, update, remove } from '../../repository/volunteer.ts'
 import { collectives } from '../../utils/generalVars.ts'
 import ModalConfirm from "../../components/ModalConfirm.vue";
-import {findAll} from "../../repository/activity.ts";
+import {findAll, patchVolunteer} from "../../repository/activity.ts";
 import { Modal } from 'bootstrap'
-import { update as updateActivity } from '../../repository/activity.ts'
 
 const availableActivities = ref<any[]>([])
 const assignModal = ref()
@@ -272,7 +271,8 @@ let modalInstance: Modal
 const route = useRoute()
 const router = useRouter()
 const toast = useToast()
-
+const assigning = ref(false)
+const unassigningId = ref<number | null>(null)
 const id = route.params.id as string | undefined
 const isNew = computed(() => !route.params.id)
 
@@ -298,35 +298,32 @@ function openAssignModal() {
 }
 
 function assignActivity(activity: any) {
-  updateActivity(activity.id, {
-    ...activity,
-    volunteer: `/api/volunteers/${id}`
-  })
+  patchVolunteer(activity.id, `/api/volunteers/${id}`)
       .then(() => {
         toast.success('Actividad asignada')
 
-        activities.value.push({
-          ...activity,
-          volunteerName: volunteer.value.name
-        })
+        activities.value.push({ ...activity })
+        availableActivities.value = availableActivities.value.filter(a => a.id !== activity.id)
 
-        availableActivities.value =
-            availableActivities.value.filter(a => a.id !== activity.id)
+        modalInstance.hide()
+      })
+      .catch(err => {
+        toast.error('Error al asignar: ' + err.message)
       })
 }
 
 function unassignActivity(activity: any) {
-  updateActivity(activity.id, {
-    ...activity,
-    volunteer: null
-  })
+  patchVolunteer(activity.id, null)
       .then(() => {
-        toast.success('Actividad desasociada')
-
-        activities.value =
-            activities.value.filter(a => a.id !== activity.id)
+        toast.success('Actividad desasociada');
+        activities.value = activities.value.filter(a => a.id !== activity.id);
       })
+      .catch(err => {
+        console.error("Error al desasignar:", err);
+        toast.error('No se pudo desasociar la actividad');
+      });
 }
+
 const collectiveLabel = (key: string) => collectives.find(c => c.key === key)?.name ?? key
 const collectiveIcon  = (key: string) => collectives.find(c => c.key === key)?.icon ?? 'fas fa-tag'
 

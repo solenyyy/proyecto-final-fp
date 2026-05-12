@@ -63,6 +63,21 @@ export function create(activity: Activity): Promise<Activity> {
         }))
 }
 
+// En repository/activity.ts
+
+export function patchVolunteer(activityId: number | string, volunteerIri: string | null): Promise<any> {
+    return authFetch(`/api/activities/${activityId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/merge-patch+json' },
+        body: JSON.stringify({
+            volunteer: volunteerIri
+        }),
+    }).then(res => {
+        if (!res.ok) throw new Error('Error al asignar voluntario')
+        return res.json()
+    })
+}
+
 export function update(id: number | string, activity: Activity): Promise<Activity> {
     return validate(activity, { groups: ['update'] })
         .then(errors => {
