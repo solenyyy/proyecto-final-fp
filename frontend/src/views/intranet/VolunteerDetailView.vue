@@ -227,6 +227,7 @@ import { findAll, patchVolunteer } from "../../repository/activity.ts"
 import { Modal } from 'bootstrap'
 import {useLoading} from "vue-loading-overlay";
 
+
 const loadingSt = useLoading()
 const availableActivities = ref<any[]>([])
 const assignModal = ref()
