@@ -35,8 +35,17 @@ export class Activity {
     @Expose({ groups: ['default'] })
     @IsOptional({ groups: ['update'] })
     @Transform(({ value }) => {
-        if (typeof value === 'object' && value !== null) return value['@id'] ?? null
+        if (typeof value === 'object' && value !== null) {
+            return value['@id'] ?? null
+        }
+
         return value ?? null
     })
     public volunteer: string | null = null
+
+    @Expose({ groups: ['default'] })
+    @Transform(({ obj }) => {
+        return obj.volunteer?.name ?? null
+    })
+    public volunteerName: string | null = null
 }

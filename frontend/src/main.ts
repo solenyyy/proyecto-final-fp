@@ -8,6 +8,7 @@ import '@fortawesome/fontawesome-free/css/all.min.css'
 import Toast from 'vue-toastification'
 import 'vue-toastification/dist/index.css'
 import 'reflect-metadata'
+import 'vue-loading-overlay/dist/css/index.css'
 
 createApp(App)
     .use(router)
