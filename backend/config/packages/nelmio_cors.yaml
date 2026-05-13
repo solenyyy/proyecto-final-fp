@@ -1,16 +1,16 @@
 nelmio_cors:
     defaults:
-        origin_regex: false
+        origin_regex: true
+        allow_origin: ['^https://proyecto-final-fp-five\.vercel\.app$']
         allow_credentials: true
-        allow_origin: ['https://proyecto-final-fp-five.vercel.app']
-        allow_methods: ['GET', 'OPTIONS', 'POST', 'PUT', 'PATCH', 'DELETE']
-        allow_headers: ['Content-Type', 'Authorization', 'X-Requested-With']
+        allow_methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS']
+        allow_headers: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin']
         expose_headers: ['Authorization']
         max_age: 3600
 
     paths:
-        '^/api':
-            allow_origin: ['https://proyecto-final-fp-five.vercel.app']
-            allow_headers: ['Content-Type', 'Authorization', 'X-Requested-With']
+        '^/':
+            allow_origin: ['^https://proyecto-final-fp-five\.vercel\.app$']
+            allow_headers: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin']
             allow_methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS']
             max_age: 3600
