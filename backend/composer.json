@@ -78,8 +78,11 @@
     },
     "extra": {
         "symfony": {
-            "allow-contrib": false,
-            "require": "7.4.*"
+            "allow-contrib": true,
+            "require": "6.4.*"
+        },
+        "runtime": {
+            "class": "Symfony\\Component\\Runtime\\SymfonyRuntime"
         }
     },
     "require-dev": {
