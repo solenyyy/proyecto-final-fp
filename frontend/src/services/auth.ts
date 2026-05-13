@@ -15,15 +15,19 @@ export function authFetch(url: string, options: RequestInit = {}): Promise<Respo
     })
 }
 
-export function login(email: string, password: string): Promise<LoginResponse> {
+export function login(email: string, password: string) {
     return fetch(`${API_URL}/api/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
     })
-        .then(res => {
-            if (!res.ok) throw new Error('Credenciales incorrectas')
-            return res.json()
+        .then(async res => {
+            const text = await res.text(); // Leemos como texto primero
+            console.log('Respuesta bruta del servidor:', text); // <--- MIRA ESTO EN LA CONSOLA
+
+            if (!res.ok) throw new Error('Credenciales incorrectas');
+
+            return JSON.parse(text); // Intentamos convertirlo a mano
         })
 }
 
