@@ -78,8 +78,7 @@
     },
     "extra": {
         "symfony": {
-            "allow-contrib": true,
-            "require": "6.4.*"
+            "allow-contrib": true
         },
         "runtime": {
             "class": "Symfony\\Component\\Runtime\\SymfonyRuntime"
